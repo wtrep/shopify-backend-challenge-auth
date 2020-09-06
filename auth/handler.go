@@ -6,13 +6,26 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/wtrep/shopify-backend-challenge-auth/common"
 	"net/http"
+	"os"
 )
 
 type Handler struct {
 	db *sql.DB
 }
 
+func CheckEnvVariables() {
+	env := []string{"DB_IP", "DB_PASSWORD", "DB_USERNAME", "DB_NAME", "JWT_KEY"}
+	for _, e := range env {
+		_, ok := os.LookupEnv(e)
+		if !ok {
+			panic("fatal: environment variable " + e + " is not set")
+		}
+	}
+}
+
 func SetupAndServeRoutes() {
+	CheckEnvVariables()
+
 	db, err := NewConnectionPool()
 	if err != nil {
 		panic(err)
