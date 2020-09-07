@@ -13,6 +13,7 @@ const (
 	defaultCost = 10
 )
 
+// Create a new User object by hashing the provided password
 func NewUser(username string, password string) (*User, error) {
 	pwHash, err := bcrypt.GenerateFromPassword([]byte(password), defaultCost)
 	if err != nil {
@@ -24,6 +25,7 @@ func NewUser(username string, password string) (*User, error) {
 	}, nil
 }
 
+// Check that the password match the stored hash
 func (u *User) goodPassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword(u.PwHash, []byte(password))
 	if err != nil {

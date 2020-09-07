@@ -3,16 +3,19 @@ package auth
 import (
 	"database/sql"
 	"encoding/json"
-	"github.com/gorilla/mux"
-	"github.com/wtrep/shopify-backend-challenge-auth/common"
+	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
+	"github.com/wtrep/shopify-backend-challenge-auth/common"
 )
 
 type Handler struct {
 	db *sql.DB
 }
 
+// Check that all required environment variables are set
 func CheckEnvVariables() {
 	env := []string{"DB_IP", "DB_PASSWORD", "DB_USERNAME", "DB_NAME", "JWT_KEY"}
 	for _, e := range env {
@@ -23,6 +26,7 @@ func CheckEnvVariables() {
 	}
 }
 
+// Setup the routes and handle the traffic
 func SetupAndServeRoutes() {
 	CheckEnvVariables()
 
@@ -35,12 +39,20 @@ func SetupAndServeRoutes() {
 	r := mux.NewRouter()
 	r.HandleFunc("/user", handler.HandlePostUser).Methods("POST")
 	r.HandleFunc("/key", handler.HandleGetKey).Methods("GET")
+	r.HandleFunc("/healthz", HandleHealthzProbe)
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {
 		panic(err)
 	}
 }
 
+// Respond to the Kubernetes Readiness and Liveness probes
+func HandleHealthzProbe(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "OK")
+}
+
+// Handle the request to create a new user
 func (h *Handler) HandlePostUser(w http.ResponseWriter, r *http.Request) {
 	var request UserRequest
 	w.Header().Set("Content-Type", "application/json")
@@ -72,6 +84,7 @@ func (h *Handler) HandlePostUser(w http.ResponseWriter, r *http.Request) {
 	sendJWTToken(w, user)
 }
 
+// Handle the request to Get a new JWT for an existing user
 func (h *Handler) HandleGetKey(w http.ResponseWriter, r *http.Request) {
 	var request UserRequest
 	w.Header().Set("Content-Type", "application/json")
@@ -94,6 +107,7 @@ func (h *Handler) HandleGetKey(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Generate a new JWT and send it to the user
 func sendJWTToken(w http.ResponseWriter, user *User) {
 	token, err := common.GenerateJWT(user.Username)
 	if err != nil {

@@ -3,10 +3,15 @@ package auth
 import (
 	"database/sql"
 	"errors"
-	"github.com/go-sql-driver/mysql"
 	"os"
+
+	"github.com/go-sql-driver/mysql"
 )
 
+// Thrown when a user already exist in the DB with the same username
+var UserAlreadyExist = errors.New("user already exist")
+
+// Return a new DB Connection Pool
 func NewConnectionPool() (*sql.DB, error) {
 	dbIP := os.Getenv("DB_IP")
 	dbPassword := os.Getenv("DB_PASSWORD")
@@ -21,8 +26,7 @@ func NewConnectionPool() (*sql.DB, error) {
 	return db, nil
 }
 
-var UserAlreadyExist = errors.New("user already exist")
-
+// Create a new user in the database
 func CreateUser(db *sql.DB, user User) error {
 	_, err := db.Exec("INSERT INTO users (username, pwHash) VALUEs (?, ?)", user.Username, user.PwHash)
 	if err, ok := err.(*mysql.MySQLError); ok {
@@ -34,6 +38,7 @@ func CreateUser(db *sql.DB, user User) error {
 	return nil
 }
 
+// Get an existing user from the database
 func GetUser(db *sql.DB, username string) (*User, error) {
 	row := db.QueryRow("SELECT * FROM users WHERE username=?", username)
 	user := &User{}
