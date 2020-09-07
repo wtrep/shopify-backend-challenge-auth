@@ -3,6 +3,7 @@ package auth
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/go-sql-driver/mysql"
@@ -13,17 +14,34 @@ var UserAlreadyExist = errors.New("user already exist")
 
 // Return a new DB Connection Pool
 func NewConnectionPool() (*sql.DB, error) {
-	dbIP := os.Getenv("DB_IP")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
-	dbUsername := os.Getenv("DB_USERNAME")
+	dbUser := os.Getenv("DB_USERNAME")
+	dbIP := "127.0.0.1"
 
-	db, err := sql.Open("mysql", dbUsername+":"+dbPassword+"@("+dbIP+")/"+dbName+
-		"?parseTime=true")
+	var dbURI string
+	dbURI = fmt.Sprintf("%s:%s@(%s)/%s?parseTime=true", dbUser, dbPassword, dbIP, dbName)
+
+	db, err := sql.Open("mysql", dbURI)
+	if err != nil {
+		return nil, err
+	}
+
+	err = createImageTableIfNotExist(db)
 	if err != nil {
 		return nil, err
 	}
 	return db, nil
+}
+
+// Create the users table if it doesn't exist
+func createImageTableIfNotExist(db *sql.DB) error {
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS users (username varchar(32) not null primary key," +
+		"pwHash binary(60) not null)")
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Create a new user in the database

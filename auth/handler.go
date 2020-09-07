@@ -17,7 +17,7 @@ type Handler struct {
 
 // Check that all required environment variables are set
 func CheckEnvVariables() {
-	env := []string{"DB_IP", "DB_PASSWORD", "DB_USERNAME", "DB_NAME", "JWT_KEY"}
+	env := []string{"DB_PASSWORD", "DB_USERNAME", "DB_NAME", "JWT_KEY"}
 	for _, e := range env {
 		_, ok := os.LookupEnv(e)
 		if !ok {
