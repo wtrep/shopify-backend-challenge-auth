@@ -18,7 +18,7 @@ repository](https://github.com/wtrep/shopify-backend-challenge/blob/master/kuber
 
 
 ### Docker Image and Kubernetes
-The microservice is packaged into a Docker image to allow deployment into a Kubernetes Cluster. You can also download the built image directly from [Docker Hub](https://hub.docker.com/r/wtrep/shopify-backend-challenge-image)
+The microservice is packaged into a Docker image to allow deployment into a Kubernetes Cluster. You can also download the built image directly from [Docker Hub](https://hub.docker.com/r/wtrep/shopify-backend-challenge-auth)
 
 ## Environment variables
 The following environment variables need to be set for the microservice to work :
