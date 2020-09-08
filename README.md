@@ -13,7 +13,7 @@ The main logic of the microservice can be found in the auth package. The common 
 The authentification is handled through username and password. The password is kept hashed in the database using the Bcrypt cryptographic algorithm.
 
 ### Database
-The microservice needs to have access to a MySQL database located at `localhost:3306`. You can find the Terraform code for a GCP Cloud SQL instance in the [main repository](https://github.com/wtrep/shopify-backend-challenge/tree/master/terraform/cloud_sql). For local testing you can use the [mysql docker image](https://hub.docker.com/_/mysql). To allow access to Cloud SQL in GKE, you need to use the Cloud SQL sidecar proxy as shown in the [main
+The microservice needs to have access to a MySQL database located at `localhost:3306`. You can find the Terraform code for a GCP Cloud SQL instance in the [main repository](https://github.com/wtrep/shopify-backend-challenge/tree/master/terraform/cloud_sql). To allow access to Cloud SQL in GKE, you need to use the Cloud SQL sidecar proxy as shown in the [main
 repository](https://github.com/wtrep/shopify-backend-challenge/blob/master/kubernetes/image-microservice-deployment.yml).
 
 
