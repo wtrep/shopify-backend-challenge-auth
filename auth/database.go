@@ -14,16 +14,7 @@ var UserAlreadyExist = errors.New("user already exist")
 
 // Return a new DB Connection Pool
 func NewConnectionPool() (*sql.DB, error) {
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	dbUser := os.Getenv("DB_USERNAME")
-	dbIP, ok := os.LookupEnv("DB_IP")
-	if !ok {
-		dbIP = "127.0.0.1"
-	}
-
-	var dbURI string
-	dbURI = fmt.Sprintf("%s:%s@(%s)/%s?parseTime=true", dbUser, dbPassword, dbIP, dbName)
+	dbURI := generateURI()
 
 	db, err := sql.Open("mysql", dbURI)
 	if err != nil {
@@ -35,6 +26,21 @@ func NewConnectionPool() (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
+}
+
+// Generate a database URI from environment variables
+func generateURI() string {
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+	dbUser := os.Getenv("DB_USERNAME")
+	dbIP, ok := os.LookupEnv("DB_IP")
+	if !ok {
+		dbIP = "127.0.0.1"
+	}
+
+	var dbURI string
+	dbURI = fmt.Sprintf("%s:%s@(%s)/%s?parseTime=true", dbUser, dbPassword, dbIP, dbName)
+	return dbURI
 }
 
 // Create the users table if it doesn't exist
