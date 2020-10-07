@@ -9,6 +9,10 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
+const (
+	duplicateEntryError = 1062
+)
+
 // Thrown when a user already exist in the DB with the same username
 var UserAlreadyExist = errors.New("user already exist")
 
@@ -57,7 +61,7 @@ func createImageTableIfNotExist(db *sql.DB) error {
 func CreateUser(db *sql.DB, user User) error {
 	_, err := db.Exec("INSERT INTO users (username, pwHash) VALUEs (?, ?)", user.Username, user.PwHash)
 	if err, ok := err.(*mysql.MySQLError); ok {
-		if err.Number == 1062 {
+		if err.Number == duplicateEntryError {
 			return UserAlreadyExist
 		}
 		return errors.New(err.Error())
