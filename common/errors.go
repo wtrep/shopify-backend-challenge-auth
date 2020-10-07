@@ -188,7 +188,7 @@ var UserTooLongError = ErrorResponseError{
 var UserTooShortError = ErrorResponseError{
 	Id:     1224,
 	Name:   "UserTooShortError",
-	Detail: "Password length is more than 24 characters",
+	Detail: "Username length is more than 24 characters",
 	Code:   http.StatusBadRequest,
 }
 
