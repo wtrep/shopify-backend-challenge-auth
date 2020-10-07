@@ -171,6 +171,27 @@ var GetImagesDBError = ErrorResponseError{
 	Code:   http.StatusInternalServerError,
 }
 
+var PasswordTooShortError = ErrorResponseError{
+	Id:     1222,
+	Name:   "PasswordTooShortError",
+	Detail: "Password length is less than 8 characters",
+	Code:   http.StatusBadRequest,
+}
+
+var UserTooLongError = ErrorResponseError{
+	Id:     1223,
+	Name:   "UserTooLongError",
+	Detail: "Username length is more than 4 characters",
+	Code:   http.StatusBadRequest,
+}
+
+var UserTooShortError = ErrorResponseError{
+	Id:     1224,
+	Name:   "UserTooShortError",
+	Detail: "Password length is more than 24 characters",
+	Code:   http.StatusBadRequest,
+}
+
 func RespondWithError(w http.ResponseWriter, error *ErrorResponseError) {
 	w.WriteHeader(int(error.Code))
 	response := ErrorResponse{

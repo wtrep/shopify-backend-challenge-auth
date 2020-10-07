@@ -62,8 +62,8 @@ func (h *Handler) HandlePostUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(request.Password) > 32 {
-		common.RespondWithError(w, &common.PasswordTooLongError)
+	if apiErr := verifyCredentials(request.Name, request.Password); apiErr != nil {
+		common.RespondWithError(w, apiErr)
 		return
 	}
 	user, err := NewUser(request.Name, request.Password)
@@ -100,7 +100,7 @@ func (h *Handler) HandleGetKey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if currentUser.goodPassword(request.Password) {
+	if currentUser.isGoodPassword(request.Password) {
 		sendJWTToken(w, currentUser)
 	} else {
 		common.RespondWithError(w, &common.WrongPasswordError)
